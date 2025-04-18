@@ -13,13 +13,14 @@ A lightweight, flexible library for managing scheduled tasks with Vercel Cron Jo
 ## Installation
 
 1. Add the library files to your Next.js project:
+
    - `lib/cron-scheduler.ts` - Core library
    - `app/api/cron/route.ts` - Vercel cron job endpoint
    - `vercel.json` - Vercel configuration
 
 2. Configure your cron schedule in `vercel.json`:
 
-\`\`\`json
+```json
 {
   "crons": [
     {
@@ -28,7 +29,7 @@ A lightweight, flexible library for managing scheduled tasks with Vercel Cron Jo
     }
   ]
 }
-\`\`\`
+```
 
 ## Usage
 
@@ -36,8 +37,8 @@ A lightweight, flexible library for managing scheduled tasks with Vercel Cron Jo
 
 Create a file to define your tasks (e.g., `lib/tasks.ts`):
 
-\`\`\`typescript
-import { registerTask } from './cron-scheduler';
+```typescript
+import { registerTask } from "./cron-scheduler";
 
 // Daily task (runs every day)
 registerTask("daily-task", {
@@ -47,16 +48,16 @@ registerTask("daily-task", {
     console.log("Running daily task...");
     return { status: "completed" };
   },
-  schedule: {} // Empty schedule means run every time
+  schedule: {}, // Empty schedule means run every time
 });
-\`\`\`
+```
 
 Import this file early in your application lifecycle to register the tasks:
 
-\`\`\`typescript
+```typescript
 // In app/layout.tsx or similar
-import '../lib/tasks';
-\`\`\`
+import "../lib/tasks";
+```
 
 ### Scheduling Options
 
@@ -64,7 +65,7 @@ The library supports various scheduling options that can be combined:
 
 #### Run on specific days of the week
 
-\`\`\`typescript
+```typescript
 registerTask("weekly-task", {
   name: "Weekly Task",
   handler: async () => {
@@ -72,14 +73,14 @@ registerTask("weekly-task", {
     return { status: "completed" };
   },
   schedule: {
-    days: ["monday", "wednesday", "friday"]
-  }
+    days: ["monday", "wednesday", "friday"],
+  },
 });
-\`\`\`
+```
 
 #### Run on specific dates of the month
 
-\`\`\`typescript
+```typescript
 registerTask("monthly-task", {
   name: "Monthly Task",
   handler: async () => {
@@ -87,14 +88,14 @@ registerTask("monthly-task", {
     return { status: "completed" };
   },
   schedule: {
-    dates: [1, 15] // Runs on the 1st and 15th of each month
-  }
+    dates: [1, 15], // Runs on the 1st and 15th of each month
+  },
 });
-\`\`\`
+```
 
 #### Run in specific months
 
-\`\`\`typescript
+```typescript
 registerTask("quarterly-task", {
   name: "Quarterly Task",
   handler: async () => {
@@ -102,14 +103,14 @@ registerTask("quarterly-task", {
     return { status: "completed" };
   },
   schedule: {
-    months: ["january", "april", "july", "october"]
-  }
+    months: ["january", "april", "july", "october"],
+  },
 });
-\`\`\`
+```
 
 #### Run on specific weeks of the month
 
-\`\`\`typescript
+```typescript
 registerTask("biweekly-task", {
   name: "Biweekly Task",
   handler: async () => {
@@ -117,14 +118,14 @@ registerTask("biweekly-task", {
     return { status: "completed" };
   },
   schedule: {
-    weekNumbers: [1, 3] // Runs on the 1st and 3rd week of each month
-  }
+    weekNumbers: [1, 3], // Runs on the 1st and 3rd week of each month
+  },
 });
-\`\`\`
+```
 
 #### Combine multiple scheduling options
 
-\`\`\`typescript
+```typescript
 registerTask("complex-task", {
   name: "Complex Task",
   handler: async () => {
@@ -134,10 +135,10 @@ registerTask("complex-task", {
   schedule: {
     days: ["monday"],
     months: ["january", "july"],
-    weekNumbers: [2, 4] // 2nd and 4th Monday in January and July
-  }
+    weekNumbers: [2, 4], // 2nd and 4th Monday in January and July
+  },
 });
-\`\`\`
+```
 
 ## API Reference
 
@@ -146,6 +147,7 @@ registerTask("complex-task", {
 Registers a new task with the specified ID and definition.
 
 Parameters:
+
 - `taskId`: A unique identifier for the task
 - `task`: The task definition object
 
@@ -154,6 +156,7 @@ Parameters:
 Removes a task from the registry.
 
 Parameters:
+
 - `taskId`: The ID of the task to remove
 
 ### `getAllTasks(): Record<string, TaskDefinition>`
@@ -162,28 +165,30 @@ Returns all registered tasks.
 
 ### Task Definition
 
-\`\`\`typescript
+```typescript
 interface TaskDefinition {
-  name: string;                // Human-readable name
+  name: string; // Human-readable name
   handler: () => Promise<any>; // Function to execute
-  schedule: {                  // When to run the task
-    days?: string[];           // Days of week (e.g., "monday")
-    dates?: number[];          // Dates of month (e.g., 1, 15)
-    months?: string[];         // Months (e.g., "january")
-    weekNumbers?: number[];    // Week numbers in month (e.g., 1, 3)
+  schedule: {
+    // When to run the task
+    days?: string[]; // Days of week (e.g., "monday")
+    dates?: number[]; // Dates of month (e.g., 1, 15)
+    months?: string[]; // Months (e.g., "january")
+    weekNumbers?: number[]; // Week numbers in month (e.g., 1, 3)
   };
 }
-\`\`\`
+```
 
 ## Deployment
 
 Deploy your project to Vercel to activate the cron job:
 
-\`\`\`bash
+```bash
 vercel deploy --prod
-\`\`\`
+```
 
 Important notes:
+
 - Cron jobs only run in production deployments, not in preview deployments
 - Vercel cron jobs are triggered by making an HTTP GET request to the specified path
 - The cron job will run according to the schedule specified in `vercel.json`
@@ -192,7 +197,7 @@ Important notes:
 
 ### Database Backup
 
-\`\`\`typescript
+```typescript
 registerTask("db-backup", {
   name: "Database Backup",
   handler: async () => {
@@ -202,14 +207,14 @@ registerTask("db-backup", {
     return { status: "Backup completed", timestamp: new Date().toISOString() };
   },
   schedule: {
-    days: ["monday", "wednesday", "friday"]
-  }
+    days: ["monday", "wednesday", "friday"],
+  },
 });
-\`\`\`
+```
 
 ### Send Weekly Newsletter
 
-\`\`\`typescript
+```typescript
 registerTask("newsletter", {
   name: "Weekly Newsletter",
   handler: async () => {
@@ -222,13 +227,13 @@ registerTask("newsletter", {
     days: ["friday"],
     // Only send at 9am - this is handled by the Vercel cron schedule
     // in vercel.json, not by this library
-  }
+  },
 });
-\`\`\`
+```
 
 ### Monthly Report Generation
 
-\`\`\`typescript
+```typescript
 registerTask("monthly-report", {
   name: "Monthly Report",
   handler: async () => {
@@ -238,10 +243,10 @@ registerTask("monthly-report", {
     return { status: "Reports generated" };
   },
   schedule: {
-    dates: [1] // First day of each month
-  }
+    dates: [1], // First day of each month
+  },
 });
-\`\`\`
+```
 
 ## License
 
